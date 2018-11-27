@@ -31,6 +31,7 @@ def e_spamer():
             time.sleep(0.02+random.random()*0.05)
             keyboard.release('e')
 
+
 def on_press(key):
     global trun_on
     if key == Key.f2:
