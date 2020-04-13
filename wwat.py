@@ -23,6 +23,25 @@ def clicker(mean_delay_between_clicks, mean_pressed_time, num_of_clicks, id):
             config["setups"][id]["current_clicks"] = 0
             config["setups"][id]["activated"] = False
 
+
+def deterministic_clicker(mean_delay_between_clicks, mean_pressed_time, num_of_clicks, id):
+    while True:
+        time.sleep(0.002)
+        if config["setups"][id]["activated"] and \
+                ((config["setups"][id]["current_clicks"] < num_of_clicks) or (num_of_clicks == -1)):
+            st = time.time()
+            print(st)
+            time.sleep(mean_delay_between_clicks)
+            keyboard.press(config["setups"][id]["send_key"])
+            time.sleep(mean_pressed_time)
+            keyboard.release(config["setups"][id]["send_key"])
+            print(time.time() - st)
+            if num_of_clicks != -1:
+                config["setups"][id]["current_clicks"] += 1
+        if (config["setups"][id]["current_clicks"] >= num_of_clicks) and (num_of_clicks != -1):
+            config["setups"][id]["current_clicks"] = 0
+            config["setups"][id]["activated"] = False
+
 def e_spamer():
     while True:
         time.sleep(0.7+random.random()*0.2)
@@ -54,7 +73,7 @@ with open("clicker.cfg") as file:
 for i, command in enumerate(config["setups"]):
     command["activated"] = False
     command["current_clicks"] = 0
-    command["thread"] = threading.Thread(target=clicker,
+    command["thread"] = threading.Thread(target=deterministic_clicker,
                                          args=(command["mean_delay_between_clicks"],
                                                command["mean_pressed_time"],
                                                command["num_of_clicks"],
